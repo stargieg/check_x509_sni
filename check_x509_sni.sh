@@ -122,7 +122,7 @@ if [ -n "$HOST" ] ; then
   CURRENTHOST="$(grep -B1 $HOSTNAME $SNI | head -1 | tr -d '[]')"
   if ! [ -z "$CURRENTHOST" ] ; then
     if [ "$CURRENTHOST" != "$HOST" ] ; then
-      sed -e -i $SNI 's/$CURRENTHOST/$HOST/'
+      sed -i $SNI -e 's/$CURRENTHOST/$HOST/'
     fi
   else
     echo "" >> $SNI
