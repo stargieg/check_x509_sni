@@ -2,7 +2,7 @@ check_x509_sni
 ==================
 
 This check plugin for Icinga2 / Icingaweb2 Keeps track 
-of certificates as they are deployed in a network environment.
+of certificates as they are deployed in a network environment with dynamic IP's.
 
 	$ ./check_x509_sni.sh -h
 	Required parameters:
