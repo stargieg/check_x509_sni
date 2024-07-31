@@ -122,12 +122,17 @@ if [ -n "$HOST" ] ; then
   CURRENTHOST="$(grep -B1 $HOSTNAME $SNI | head -1 | tr -d '[]')"
   if ! [ -z "$CURRENTHOST" ] ; then
     if [ "$CURRENTHOST" != "$HOST" ] ; then
-      sed -i $SNI -e 's/$CURRENTHOST/$HOST/'
+      sed -i $SNI -e "s/$CURRENTHOST/$HOST/"
     fi
   else
-    echo "" >> $SNI
-    echo "[$HOST]" >> $SNI
-    echo "hostnames = \"$HOSTNAME\"" >> $SNI
+    CURRENTHOSTNAME="$(grep -A1 $HOST $SNI | tail -1 | cut -d \" -f 1)"
+    if [ -z "$CURRENTHOSTNAME" ] ; then
+      echo "" >> $SNI
+      echo "[$HOST]" >> $SNI
+      echo "hostnames = \"$HOSTNAME\"" >> $SNI
+    else
+      sed -i $SNI -e "s/$CURRENTHOSTNAME/$CURRENTHOSTNAME,$HOSTNAME/"
+    fi
   fi
   JOBNAME="$HOSTNAME-$PORT"
   id=$($MYSQL -p"$password" -u "$username" -D "$dbname" -N -B -e "SELECT id FROM x509_job where name = '$JOBNAME';")
@@ -145,5 +150,5 @@ if [ -n "$HOST" ] ; then
   [ -z "$SELFSIGN" ] || params="--allow-self-signed $params"
   icingacli x509 check host --host $HOSTNAME --port $PORT $params
 else
-	Error "nslookup fail for $$HOSTNAME"
+	Error "nslookup fail for $HOSTNAME"
 fi
